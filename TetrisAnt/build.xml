@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<project
+         xmlns:ivy="antlib:org.apache.ivy.ant"
+         name="Compilation de Tetris"
+         default="all"
+         >
+<!-- ${basedir} to add -->
+    <property name="src.dir" value="src"/>
+    <property name="obj.dir" value="bin"/>
+    <property name="libs.dir" value="lib"/>
+    <property name="test.dir" value="test"/>
+    <property name="doc.dir" value="doc"/>
+    <property name="testreport.dir" value="test-reports" />
+    <property name="main-class" value="fr.ubo.tetris.Tetris"/>
+    <property name="compile.classpath" value="lib/commons-lang3-3.5.jar"/>
+    <property name="project-version" value="1.0"/>
+
+
+    <target name="clean">
+        <echo message="Supressions des fichiers issus de la compilation"/>
+        <delete dir="${obj.dir}" failonerror="false"/>
+        <!-- <delete dir="bin"/> -->
+        <delete dir="${libs.dir}" failonerror="false"/>
+        <mkdir dir="${libs.dir}"/>
+    </target>
+
+    <target name="retrieve" >
+        <ivy:settings/>
+        <ivy:resolve />
+        <ivy:retrieve sync="true" type="jar" />
+    </target>
+
+
+    <target name="compile" depends="clean, retrieve">
+        <mkdir dir="${obj.dir}"/>
+        <!--<mkdir dir="bin" />-->
+        <javac srcdir="${src.dir}" destdir="${obj.dir}">
+            <!--<javac srcdir="src" destdir="bin" >-->
+            <!-- <classpath path="lib/commons-lang3-3.5.jar" /> -->
+            <classpath path="${compile.classpath}"/>
+        </javac>
+    </target>
+
+    <target name="compile-test" depends="">
+        <javac srcdir="${test.dir}" destdir="${obj.dir}">
+            <classpath path="${libs.dir}/junit-4.12.jar:${libs.dir}/hamcrest-all-1.3.jar"/>
+        </javac>
+    </target>
+
+<!-- HWAT ? -->
+    <target name="test" depends="compile-test">
+        <mkdir dir="${obj.dir}/test-results"/>
+        <junit>
+            <formatter type="xml" />
+            <formatter type="plain" />
+            <classpath location="${libs.dir}/junit-4.12.jar"/>
+            <classpath location="${libs.dir}/hamcrest-all-1.3.jar" />
+            <classpath location="${obj.dir}" />
+        </junit>
+    </target>
+
+    <target name="test-reports" depends="test">
+        <delete dir="${testreport.dir}" />
+        <mkdir dir="${testreport.dir}" />
+        <junitreport todir="${testreport.dir}">
+            <fileset dir="${obj.dir}/test-results">
+                <include name="TEST*.xml"/>
+            </fileset>
+            <report format="frames" todir="${testreport.dir}" />
+        </junitreport>
+    </target>
+
+    <target name="javadoc">
+        <delete dir="${doc.dir}" />
+        <mkdir dir="${doc.dir}"/>
+        <javadoc sourcepath="${src.dir}" destdir="${doc.dir}" />
+    </target>
+
+    <target name="all" depends="dist" />
+
+    <target name="dist" depends="compile">
+        <jar jarfile="Tetris.jar" basedir="bin">
+       <!--     <fileset dir="${obj.dir}" includes="${libs.dir}"/> -->
+            <manifest>
+                <attribute name="Built-By" value="SAIDEM"/>
+                <attribute name="Specification-Title" value="Example"/>
+                <attribute name="Implementation-Version" value="${project-version}"/>
+                <!-- <attribute name="Main-Class" value="fr.ubo.tetris.Tetris"/> -->
+                <attribute name="Main-Class" value="${main-class}"/>
+                <!--<attribute name="Class-Path" value="lib/commons-lang3-3.5.jar"/>-->
+                <attribute name="Class-Path" value="${compile.classpath}"/>
+            </manifest>
+        </jar>
+    </target>
+</project>
