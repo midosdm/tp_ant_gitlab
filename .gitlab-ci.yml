@@ -7,7 +7,7 @@ build-job:
     - java -cp D:\dosi\tp_ant\TetrisAnt\bin\Tetris.jar;D:\dosi\tp_ant\TetrisAnt\lib\commons-lang3-3.5.jar fr.ubo.tetris.Tetris
 
 
-test-job1:
+test-job:
   stage: test
   script:
     - echo "This job tests something"
