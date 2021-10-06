@@ -1,7 +1,14 @@
-javac -d /bin -classpath lib/commons-lang3-3.5.jar src/fr/ubo/tetris/*.java
+build-job:
+  stage: build
+  script:
+    - javac -d /bin -classpath lib/commons-lang3-3.5.jar src/fr/ubo/tetris/*.java
+    - cd bin
+    - jar -cf Tetris.jar fr/ubo/tetris/*
+    - java -cp D:\dosi\tp_ant\TetrisAnt\bin\Tetris.jar;D:\dosi\tp_ant\TetrisAnt\lib\commons-lang3-3.5.jar fr.ubo.tetris.Tetris
 
-cd bin
 
-jar -cf Tetris.jar fr/ubo/tetris/*
+test-job1:
+  stage: test
+  script:
+    - echo "This job tests something"
 
-java -cp D:\dosi\tp_ant\TetrisAnt\bin\Tetris.jar;D:\dosi\tp_ant\TetrisAnt\lib\commons-lang3-3.5.jar fr.ubo.tetris.Tetris
